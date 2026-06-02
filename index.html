@@ -3,792 +3,512 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>تطبيق تقييم المناقصات</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+<title>Tender Evaluation | تقييم المناقصات</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <style>
-/* ═══════════════════════════════════════════
-   ROOT VARIABLES
-═══════════════════════════════════════════ */
 :root {
-  --bg:        #07080f;
-  --surface:   #0e0f1a;
-  --surface2:  #14162a;
-  --surface3:  #1c1f35;
-  --surface4:  #242840;
-  --border:    rgba(255,255,255,0.07);
-  --border2:   rgba(255,255,255,0.13);
-  --border3:   rgba(255,255,255,0.20);
+  --bg:#07080f; --surface:#0e0f1a; --surface2:#14162a; --surface3:#1c1f35;
+  --border:rgba(255,255,255,0.07); --border2:rgba(255,255,255,0.13); --border3:rgba(255,255,255,0.20);
+  --teal:#2dd4bf; --teal2:#14b8a6; --teal-dim:rgba(45,212,191,0.10); --teal-dim2:rgba(45,212,191,0.05);
+  --gold:#f59e0b; --gold-dim:rgba(245,158,11,0.12);
+  --blue:#6366f1; --blue-dim:rgba(99,102,241,0.12);
+  --red:#f87171; --red-dim:rgba(248,113,113,0.10);
+  --green:#34d399; --green-dim:rgba(52,211,153,0.10);
+  --t1:#eeeef5; --t2:#8888aa; --t3:#4a4a66;
+  --r:12px; --r-sm:8px; --r-lg:16px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--t1);min-height:100vh;overflow-x:hidden}
+body.en{font-family:'DM Sans',sans-serif}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(45,212,191,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(45,212,191,0.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+.app{position:relative;z-index:1;max-width:960px;margin:0 auto;padding:2rem 1.25rem 4rem}
 
-  /* Brand */
-  --teal:      #2dd4bf;
-  --teal2:     #14b8a6;
-  --teal-dim:  rgba(45,212,191,0.10);
-  --teal-dim2: rgba(45,212,191,0.05);
-  --gold:      #f59e0b;
-  --gold-dim:  rgba(245,158,11,0.12);
-  --blue:      #6366f1;
-  --blue-dim:  rgba(99,102,241,0.12);
-  --red:       #f87171;
-  --red-dim:   rgba(248,113,113,0.10);
-  --green:     #34d399;
-  --green-dim: rgba(52,211,153,0.10);
+/* Lang Bar */
+.lang-bar{display:flex;justify-content:flex-end;margin-bottom:1.2rem}
+.lang-btn{display:flex;align-items:center;gap:8px;padding:7px 16px;border-radius:30px;border:1px solid var(--border2);background:var(--surface);color:var(--t2);font-size:13px;cursor:pointer;font-family:inherit;font-weight:600;transition:all 0.2s}
+.lang-btn:hover{border-color:var(--teal);color:var(--teal)}
 
-  /* Text */
-  --t1: #eeeef5;
-  --t2: #8888aa;
-  --t3: #4a4a66;
+/* Header */
+.header{display:flex;align-items:center;gap:20px;margin-bottom:2.5rem;padding-bottom:2rem;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.logo-wrap{flex-shrink:0}
+.header-text h1{font-size:26px;font-weight:800;letter-spacing:-0.5px;line-height:1.2;color:var(--t1)}
+.header-text h1 span{color:var(--teal)}
+.header-text p{font-size:13px;color:var(--t2);margin-top:5px;font-weight:300}
+.version{margin-inline-start:auto;font-size:11px;padding:4px 10px;border-radius:20px;background:var(--teal-dim);color:var(--teal);border:1px solid rgba(45,212,191,0.2);font-weight:500;white-space:nowrap}
 
-  --r: 12px;
-  --r-sm: 8px;
-  --r-lg: 16px;
-}
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
-body {
-  font-family: 'Tajawal', sans-serif;
-  background: var(--bg);
-  color: var(--t1);
-  min-height: 100vh;
-  overflow-x: hidden;
-}
+/* Tabs */
+.tabs{display:flex;gap:3px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:4px;margin-bottom:1.5rem}
+.tab{flex:1;padding:9px 6px;text-align:center;border-radius:var(--r-sm);border:none;background:none;color:var(--t3);font-size:13px;cursor:pointer;font-family:inherit;font-weight:500;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:6px}
+.tab:hover{color:var(--t2);background:var(--surface2)}
+.tab.active{background:var(--surface3);color:var(--teal);border:1px solid rgba(45,212,191,0.15)}
 
-/* ═══════════════════════════════════════════
-   BACKGROUND GRID
-═══════════════════════════════════════════ */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background-image:
-    linear-gradient(rgba(45,212,191,0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(45,212,191,0.03) 1px, transparent 1px);
-  background-size: 40px 40px;
-  pointer-events: none;
-  z-index: 0;
-}
+/* Sections */
+.section{display:none}
+.section.active{display:block;animation:fadeIn 0.25s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 
-/* ═══════════════════════════════════════════
-   LAYOUT
-═══════════════════════════════════════════ */
-.app {
-  position: relative;
-  z-index: 1;
-  max-width: 960px;
-  margin: 0 auto;
-  padding: 2rem 1.25rem 4rem;
-}
+/* Cards */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:1.25rem 1.5rem;margin-bottom:1rem}
+.card-title{font-size:12px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin-bottom:1rem;display:flex;align-items:center;gap:8px}
+.pip{width:6px;height:6px;border-radius:50%;background:var(--teal);flex-shrink:0}
+.pip-gold{background:var(--gold)} .pip-blue{background:var(--blue)}
 
-/* ═══════════════════════════════════════════
-   LOGO + HEADER
-═══════════════════════════════════════════ */
-.header {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  margin-bottom: 2.5rem;
-  padding-bottom: 2rem;
-  border-bottom: 1px solid var(--border);
-}
+/* Inputs */
+label.lbl{display:block;font-size:12px;color:var(--t2);margin-bottom:5px;font-weight:500}
+input[type=text],input[type=number]{background:var(--surface2);border:1px solid var(--border2);border-radius:var(--r-sm);padding:8px 12px;color:var(--t1);font-size:14px;font-family:inherit;width:100%;transition:border-color 0.2s}
+input:focus{outline:none;border-color:var(--teal);background:var(--surface3)}
+input::placeholder{color:var(--t3)}
 
-/* SVG Logo inline */
-.logo-wrap { flex-shrink: 0; }
+/* Buttons */
+.btn{padding:9px 18px;border-radius:var(--r-sm);border:1px solid var(--border2);background:var(--surface2);color:var(--t1);font-size:13px;cursor:pointer;font-family:inherit;font-weight:500;display:inline-flex;align-items:center;gap:6px;transition:all 0.15s}
+.btn:hover{background:var(--surface3);border-color:var(--border3)}
+.btn:active{transform:scale(0.98)}
+.btn-teal{background:var(--teal);color:#021a17;border-color:var(--teal);font-weight:700}
+.btn-teal:hover{background:var(--teal2)}
+.btn-teal:disabled{opacity:0.4;cursor:not-allowed;transform:none}
+.btn-danger{color:var(--red);border-color:transparent;background:none}
+.btn-danger:hover{background:var(--red-dim)}
+.btn-sm{padding:5px 12px;font-size:12px}
 
-.header-text h1 {
-  font-size: 26px;
-  font-weight: 800;
-  letter-spacing: -0.5px;
-  line-height: 1.15;
-  color: var(--t1);
-}
-.header-text h1 span { color: var(--teal); }
-.header-text p {
-  font-size: 13px;
-  color: var(--t2);
-  margin-top: 5px;
-  font-weight: 300;
-}
+/* Weight */
+.weight-row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+.weight-row .field{flex:1;min-width:120px}
+.weight-bar{height:5px;background:var(--surface3);border-radius:3px;overflow:hidden;display:flex;margin-top:12px}
+.wb-tech{background:var(--blue);height:100%;transition:width 0.3s}
+.wb-fin{background:var(--gold);height:100%;transition:width 0.3s}
+.weight-labels{display:flex;justify-content:space-between;margin-top:6px;font-size:11px;color:var(--t3)}
 
-/* version badge */
-.version {
-  margin-right: auto;
-  font-size: 11px;
-  padding: 4px 10px;
-  border-radius: 20px;
-  background: var(--teal-dim);
-  color: var(--teal);
-  border: 1px solid rgba(45,212,191,0.2);
-  font-weight: 500;
-  white-space: nowrap;
-}
+/* Criteria rows */
+.criteria-row{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+.criteria-row input[type=text]{flex:1;font-size:13px}
+.w-input{width:72px;text-align:center;font-size:13px;flex-shrink:0}
+.criteria-sum{font-size:12px;margin-top:6px;padding:6px 10px;border-radius:var(--r-sm)}
+.sum-ok{background:var(--green-dim);color:var(--green)}
+.sum-err{background:var(--red-dim);color:var(--red)}
 
-/* ═══════════════════════════════════════════
-   TABS
-═══════════════════════════════════════════ */
-.tabs {
-  display: flex;
-  gap: 3px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--r);
-  padding: 4px;
-  margin-bottom: 1.5rem;
-}
-.tab {
-  flex: 1;
-  padding: 9px 6px;
-  text-align: center;
-  border-radius: var(--r-sm);
-  border: none;
-  background: none;
-  color: var(--t3);
-  font-size: 13px;
-  cursor: pointer;
-  font-family: 'Tajawal', sans-serif;
-  font-weight: 500;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-}
-.tab:hover { color: var(--t2); background: var(--surface2); }
-.tab.active {
-  background: var(--surface3);
-  color: var(--teal);
-  border: 1px solid rgba(45,212,191,0.15);
-}
-.tab-icon { font-size: 16px; }
+/* Upload */
+.upload-zone{border:2px dashed var(--border2);border-radius:var(--r-lg);padding:3rem 1rem;text-align:center;cursor:pointer;position:relative;transition:all 0.2s}
+.upload-zone:hover,.upload-zone.drag{border-color:var(--teal);background:var(--teal-dim2)}
+.upload-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.upload-icon-wrap{width:64px;height:64px;border-radius:16px;background:var(--teal-dim);border:1px solid rgba(45,212,191,0.2);display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 16px}
+.upload-zone h3{font-size:16px;font-weight:600;margin-bottom:6px}
+.upload-zone p{font-size:13px;color:var(--t2)}
 
-/* ═══════════════════════════════════════════
-   SECTIONS
-═══════════════════════════════════════════ */
-.section { display: none; }
-.section.active { display: block; animation: fadeIn 0.25s ease; }
-@keyframes fadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+/* Supplier cards */
+.supplier-card{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-sm);padding:10px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px}
+.sup-avatar{width:38px;height:38px;border-radius:8px;background:var(--blue-dim);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.sup-info{flex:1;min-width:0}
+.sup-name{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sup-meta{font-size:12px;color:var(--t3);margin-top:2px}
+.status-badge{font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;flex-shrink:0;white-space:nowrap}
+.s-pending{background:var(--surface3);color:var(--t3)}
+.s-loading{background:var(--blue-dim);color:#818cf8}
+.s-analyzing{background:var(--teal-dim);color:var(--teal)}
+.s-done{background:var(--green-dim);color:var(--green)}
+.s-error{background:var(--red-dim);color:var(--red)}
 
-/* ═══════════════════════════════════════════
-   CARDS
-═══════════════════════════════════════════ */
-.card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--r-lg);
-  padding: 1.25rem 1.5rem;
-  margin-bottom: 1rem;
-}
-.card-title {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--t3);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-bottom: 1rem;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.pip { width: 6px; height: 6px; border-radius: 50%; background: var(--teal); flex-shrink:0; }
-.pip-gold { background: var(--gold); }
-.pip-blue { background: var(--blue); }
+/* Action bar */
+.action-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;margin-bottom:1rem;flex-wrap:wrap}
+.action-bar-info{font-size:13px;color:var(--t2)}
 
-/* ═══════════════════════════════════════════
-   FORM INPUTS
-═══════════════════════════════════════════ */
-label.lbl {
-  display: block;
-  font-size: 12px;
-  color: var(--t2);
-  margin-bottom: 5px;
-  font-weight: 500;
-}
-input[type=text], input[type=number] {
-  background: var(--surface2);
-  border: 1px solid var(--border2);
-  border-radius: var(--r-sm);
-  padding: 8px 12px;
-  color: var(--t1);
-  font-size: 14px;
-  font-family: 'Tajawal', sans-serif;
-  width: 100%;
-  transition: border-color 0.2s;
-}
-input[type=text]:focus, input[type=number]:focus {
-  outline: none;
-  border-color: var(--teal);
-  background: var(--surface3);
-}
-input::placeholder { color: var(--t3); }
-
-/* ═══════════════════════════════════════════
-   BUTTONS
-═══════════════════════════════════════════ */
-.btn {
-  padding: 9px 18px;
-  border-radius: var(--r-sm);
-  border: 1px solid var(--border2);
-  background: var(--surface2);
-  color: var(--t1);
-  font-size: 13px;
-  cursor: pointer;
-  font-family: 'Tajawal', sans-serif;
-  font-weight: 500;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  transition: all 0.15s;
-  text-decoration: none;
-}
-.btn:hover { background: var(--surface3); border-color: var(--border3); }
-.btn:active { transform: scale(0.98); }
-.btn-teal {
-  background: var(--teal);
-  color: #021a17;
-  border-color: var(--teal);
-  font-weight: 700;
-}
-.btn-teal:hover { background: var(--teal2); border-color: var(--teal2); }
-.btn-teal:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
-.btn-ghost { background: none; border-color: transparent; color: var(--t3); }
-.btn-ghost:hover { background: var(--surface2); color: var(--t2); }
-.btn-danger { color: var(--red); border-color: transparent; background: none; }
-.btn-danger:hover { background: var(--red-dim); }
-.btn-sm { padding: 5px 12px; font-size: 12px; }
-
-/* ═══════════════════════════════════════════
-   WEIGHT CONTROLS
-═══════════════════════════════════════════ */
-.weight-row {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  align-items: flex-end;
-}
-.weight-row .field { flex: 1; min-width: 120px; }
-.weight-bar-wrap { margin-top: 12px; }
-.weight-bar {
-  height: 5px;
-  background: var(--surface3);
-  border-radius: 3px;
-  overflow: hidden;
-  display: flex;
-}
-.wb-tech { background: var(--blue); height: 100%; transition: width 0.3s; }
-.wb-fin  { background: var(--gold); height: 100%; transition: width 0.3s; }
-.weight-labels { display: flex; justify-content: space-between; margin-top: 6px; font-size: 11px; color: var(--t3); }
-#weight-status { font-size: 12px; margin-top: 8px; }
-
-/* ═══════════════════════════════════════════
-   CRITERIA ROWS
-═══════════════════════════════════════════ */
-.criteria-row {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  margin-bottom: 8px;
-}
-.criteria-row input[type=text] { flex: 1; font-size: 13px; }
-.criteria-row .w-input { width: 72px; text-align: center; font-size: 13px; flex-shrink: 0; }
-.criteria-sum { font-size: 12px; margin-top: 6px; padding: 6px 10px; border-radius: var(--r-sm); }
-.sum-ok { background: var(--green-dim); color: var(--green); }
-.sum-err { background: var(--red-dim); color: var(--red); }
-
-/* ═══════════════════════════════════════════
-   UPLOAD ZONE
-═══════════════════════════════════════════ */
-.upload-zone {
-  border: 2px dashed var(--border2);
-  border-radius: var(--r-lg);
-  padding: 3rem 1rem;
-  text-align: center;
-  cursor: pointer;
-  position: relative;
-  transition: all 0.2s;
-}
-.upload-zone:hover, .upload-zone.drag {
-  border-color: var(--teal);
-  background: var(--teal-dim2);
-}
-.upload-zone input {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  cursor: pointer;
-  width: 100%;
-  height: 100%;
-}
-.upload-icon-wrap {
-  width: 64px; height: 64px;
-  border-radius: 16px;
-  background: var(--teal-dim);
-  border: 1px solid rgba(45,212,191,0.2);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 28px;
-  margin: 0 auto 16px;
-}
-.upload-zone h3 { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
-.upload-zone p { font-size: 13px; color: var(--t2); }
-
-/* ═══════════════════════════════════════════
-   SUPPLIER CARDS
-═══════════════════════════════════════════ */
-.supplier-card {
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: var(--r-sm);
-  padding: 10px 14px;
-  margin-bottom: 8px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  transition: border-color 0.2s;
-}
-.supplier-card:hover { border-color: var(--border2); }
-.sup-avatar {
-  width: 38px; height: 38px;
-  border-radius: 8px;
-  background: var(--blue-dim);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 18px; flex-shrink: 0;
-}
-.sup-info { flex: 1; min-width: 0; }
-.sup-name { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.sup-meta { font-size: 12px; color: var(--t3); margin-top: 2px; }
-.status-badge {
-  font-size: 11px; font-weight: 600;
-  padding: 3px 10px; border-radius: 20px; flex-shrink: 0;
-  white-space: nowrap;
-}
-.s-pending  { background: var(--surface3); color: var(--t3); }
-.s-loading  { background: var(--blue-dim); color: #818cf8; }
-.s-analyzing{ background: var(--teal-dim); color: var(--teal); }
-.s-done     { background: var(--green-dim); color: var(--green); }
-.s-error    { background: var(--red-dim); color: var(--red); }
-
-/* ═══════════════════════════════════════════
-   ACTION BAR
-═══════════════════════════════════════════ */
-.action-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--r);
-  padding: 14px 16px;
-  margin-bottom: 1rem;
-  flex-wrap: wrap;
-}
-.action-bar-info { font-size: 13px; color: var(--t2); }
-
-/* ═══════════════════════════════════════════
-   RESULTS
-═══════════════════════════════════════════ */
-.metrics-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 10px;
-  margin-bottom: 1.5rem;
-}
-.metric-card {
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: var(--r-sm);
-  padding: 14px;
-  text-align: center;
-}
-.metric-val { font-size: 28px; font-weight: 800; color: var(--teal); }
-.metric-lbl { font-size: 12px; color: var(--t3); margin-top: 4px; font-weight: 500; }
-
-.result-card {
-  border: 1px solid var(--border);
-  border-radius: var(--r-lg);
-  overflow: hidden;
-  margin-bottom: 12px;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-.result-card.winner {
-  border-color: rgba(45,212,191,0.3);
-  box-shadow: 0 0 30px rgba(45,212,191,0.07);
-}
-.result-header {
-  background: var(--surface2);
-  padding: 14px 16px;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-.rank-badge {
-  width: 36px; height: 36px;
-  border-radius: 10px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 18px; flex-shrink: 0;
-}
-.rk1 { background: var(--gold-dim); }
-.rk2 { background: rgba(156,163,175,0.1); }
-.rk3 { background: rgba(180,120,80,0.1); }
-.rkn { background: var(--surface3); font-size: 13px; font-weight: 700; color: var(--t3); }
-.result-name { font-size: 16px; font-weight: 700; }
-.winner-label { font-size: 11px; color: var(--teal); margin-top: 3px; font-weight: 600; }
-.result-total { font-size: 30px; font-weight: 800; color: var(--teal); margin-right: auto; }
-.result-total span { font-size: 14px; color: var(--t3); font-weight: 400; }
-
-.result-body { padding: 14px 16px; background: var(--surface); }
-
-.score-row { margin-bottom: 12px; }
-.score-label-row {
-  display: flex;
-  justify-content: space-between;
-  font-size: 12px;
-  color: var(--t2);
-  margin-bottom: 5px;
-}
-.score-track { height: 6px; background: var(--surface3); border-radius: 3px; overflow: hidden; }
-.sf-tech  { background: linear-gradient(90deg,#6366f1,#818cf8); height: 100%; border-radius: 3px; }
-.sf-fin   { background: linear-gradient(90deg,#f59e0b,#fbbf24); height: 100%; border-radius: 3px; }
-.sf-total { background: linear-gradient(90deg,#2dd4bf,#6366f1); height: 100%; border-radius: 3px; }
-
-.criteria-breakdown {
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: var(--r-sm);
-  padding: 10px 12px;
-  margin-top: 12px;
-}
-.bd-section-title { font-size: 11px; font-weight: 700; color: var(--t3); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
-.bd-row {
-  display: flex;
-  justify-content: space-between;
-  padding: 5px 0;
-  font-size: 12px;
-  border-bottom: 1px solid var(--border);
-}
-.bd-row:last-child { border-bottom: none; }
-.bd-name { color: var(--t2); }
-.bd-score { font-weight: 700; }
-
-.analysis-box {
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: var(--r-sm);
-  padding: 12px;
-  margin-top: 12px;
-  font-size: 13px;
-  color: var(--t2);
-  line-height: 1.7;
-  white-space: pre-wrap;
-}
-.analysis-box strong { color: var(--t1); }
-
-.cta-row {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  justify-content: center;
-  margin-top: 1.5rem;
-  padding-top: 1rem;
-  border-top: 1px solid var(--border);
-}
-
-/* ═══════════════════════════════════════════
-   SPINNER
-═══════════════════════════════════════════ */
-.spin {
-  display: inline-block;
-  width: 14px; height: 14px;
-  border: 2px solid transparent;
-  border-top-color: currentColor;
-  border-radius: 50%;
-  animation: rotate 0.7s linear infinite;
-}
-@keyframes rotate { to { transform: rotate(360deg); } }
-
-.empty {
-  text-align: center;
-  padding: 4rem 1rem;
-  color: var(--t3);
-}
-.empty-icon { font-size: 48px; margin-bottom: 12px; }
-.empty p { font-size: 14px; }
-
-/* ═══════════════════════════════════════════
-   DIVIDER
-═══════════════════════════════════════════ */
-.divider { height: 1px; background: var(--border); margin: 1rem 0; }
-
-/* ═══════════════════════════════════════════
-   FOOTER
-═══════════════════════════════════════════ */
-footer {
-  text-align: center;
-  padding: 2rem 0 0;
-  font-size: 12px;
-  color: var(--t3);
-  border-top: 1px solid var(--border);
-  margin-top: 2rem;
-}
-footer span { color: var(--teal); }
+/* Results */
+.metrics-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:1.5rem}
+.metric-card{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-sm);padding:14px;text-align:center}
+.metric-val{font-size:28px;font-weight:800;color:var(--teal)}
+.metric-lbl{font-size:12px;color:var(--t3);margin-top:4px;font-weight:500}
+.result-card{border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;margin-bottom:12px}
+.result-card.winner{border-color:rgba(45,212,191,0.3);box-shadow:0 0 30px rgba(45,212,191,0.07)}
+.result-header{background:var(--surface2);padding:14px 16px;display:flex;align-items:center;gap:14px}
+.rank-badge{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.rk1{background:var(--gold-dim)} .rk2{background:rgba(156,163,175,0.1)} .rk3{background:rgba(180,120,80,0.1)}
+.rkn{background:var(--surface3);font-size:13px;font-weight:700;color:var(--t3)}
+.result-name{font-size:16px;font-weight:700}
+.winner-label{font-size:11px;color:var(--teal);margin-top:3px;font-weight:600}
+.result-total{font-size:30px;font-weight:800;color:var(--teal);margin-inline-start:auto}
+.result-total span{font-size:14px;color:var(--t3);font-weight:400}
+.result-body{padding:14px 16px;background:var(--surface)}
+.score-row{margin-bottom:12px}
+.score-label-row{display:flex;justify-content:space-between;font-size:12px;color:var(--t2);margin-bottom:5px}
+.score-track{height:6px;background:var(--surface3);border-radius:3px;overflow:hidden}
+.sf-tech{background:linear-gradient(90deg,#6366f1,#818cf8);height:100%;border-radius:3px}
+.sf-fin{background:linear-gradient(90deg,#f59e0b,#fbbf24);height:100%;border-radius:3px}
+.sf-total{background:linear-gradient(90deg,#2dd4bf,#6366f1);height:100%;border-radius:3px}
+.criteria-breakdown{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-sm);padding:10px 12px;margin-top:12px}
+.bd-section-title{font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px}
+.bd-row{display:flex;justify-content:space-between;padding:5px 0;font-size:12px;border-bottom:1px solid var(--border)}
+.bd-row:last-child{border-bottom:none}
+.bd-name{color:var(--t2)}
+.bd-score{font-weight:700}
+.analysis-box{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-sm);padding:12px;margin-top:12px;font-size:13px;color:var(--t2);line-height:1.7;white-space:pre-wrap}
+.analysis-box strong{color:var(--t1)}
+.cta-row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:1.5rem;padding-top:1rem;border-top:1px solid var(--border)}
+.empty{text-align:center;padding:4rem 1rem;color:var(--t3)}
+.empty-icon{font-size:48px;margin-bottom:12px}
+footer{text-align:center;padding:2rem 0 0;font-size:12px;color:var(--t3);border-top:1px solid var(--border);margin-top:2rem}
+footer span{color:var(--teal)}
 </style>
 </head>
 <body>
 <div class="app">
 
-  <!-- ═══ HEADER + LOGO ═══ -->
+  <!-- Lang toggle -->
+  <div class="lang-bar">
+    <button class="lang-btn" onclick="toggleLang()">
+      <span id="lang-flag">🇬🇧</span>
+      <span id="lang-label">English</span>
+    </button>
+  </div>
+
+  <!-- Header -->
   <div class="header">
     <div class="logo-wrap">
-      <!-- SVG Logo -->
       <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
         <defs>
-          <linearGradient id="lg1" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stop-color="#1c1f35"/>
-            <stop offset="100%" stop-color="#0e0f1a"/>
-          </linearGradient>
-          <linearGradient id="lg2" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stop-color="#2dd4bf"/>
-            <stop offset="100%" stop-color="#6366f1"/>
-          </linearGradient>
-          <linearGradient id="lg3" x1="0" y1="0" x2="20" y2="20" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stop-color="#f59e0b"/>
-            <stop offset="100%" stop-color="#fbbf24"/>
-          </linearGradient>
+          <linearGradient id="lg1" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#1c1f35"/><stop offset="100%" stop-color="#0e0f1a"/></linearGradient>
+          <linearGradient id="lg2" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#2dd4bf"/><stop offset="100%" stop-color="#6366f1"/></linearGradient>
+          <linearGradient id="lg3" x1="0" y1="0" x2="20" y2="20" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#f59e0b"/><stop offset="100%" stop-color="#fbbf24"/></linearGradient>
         </defs>
-        <!-- Background rounded square -->
         <rect width="64" height="64" rx="16" fill="url(#lg1)"/>
         <rect width="64" height="64" rx="16" fill="none" stroke="rgba(45,212,191,0.25)" stroke-width="1"/>
-
-        <!-- Document body -->
         <rect x="14" y="10" width="30" height="38" rx="4" fill="none" stroke="url(#lg2)" stroke-width="1.5"/>
-
-        <!-- Document lines (specs) -->
         <line x1="20" y1="20" x2="37" y2="20" stroke="rgba(45,212,191,0.5)" stroke-width="1.5" stroke-linecap="round"/>
         <line x1="20" y1="25" x2="37" y2="25" stroke="rgba(45,212,191,0.3)" stroke-width="1.5" stroke-linecap="round"/>
         <line x1="20" y1="30" x2="31" y2="30" stroke="rgba(45,212,191,0.3)" stroke-width="1.5" stroke-linecap="round"/>
-
-        <!-- Star / award badge (bottom right overlap) -->
-        <circle cx="42" cy="44" r="11" fill="#07080f" stroke="none"/>
-        <circle cx="42" cy="44" r="10" fill="url(#lg3)" stroke="none"/>
-        <!-- Star shape -->
-        <path d="M42 37.5l1.5 4.5h4.5l-3.7 2.7 1.4 4.5L42 46.5l-3.7 2.7 1.4-4.5L36 42h4.5z"
-              fill="#07080f" opacity="0.9"/>
-
-        <!-- Check mark on document -->
-        <path d="M20 36.5 L23 39.5 L29 34" stroke="#2dd4bf" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        <circle cx="42" cy="44" r="11" fill="#07080f"/>
+        <circle cx="42" cy="44" r="10" fill="url(#lg3)"/>
+        <path d="M42 37.5l1.5 4.5h4.5l-3.7 2.7 1.4 4.5L42 46.5l-3.7 2.7 1.4-4.5L36 42h4.5z" fill="#07080f" opacity="0.9"/>
+        <path d="M20 36.5L23 39.5L29 34" stroke="#2dd4bf" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
       </svg>
     </div>
-
     <div class="header-text">
-      <h1>تقييم <span>المناقصات</span><br>بالذكاء الاصطناعي</h1>
-      <p>تحليل عروض الموردين فنياً ومالياً — تلقائي وذكي</p>
+      <h1 id="h-title">تقييم <span>المناقصات</span><br>بالذكاء الاصطناعي</h1>
+      <p id="h-sub">تحليل عروض الموردين فنياً ومالياً — تلقائي وذكي</p>
     </div>
-
     <div class="version">v2.0 — AI Powered</div>
   </div>
 
-  <!-- ═══ TABS ═══ -->
+  <!-- Tabs -->
   <div class="tabs">
-    <button class="tab active" onclick="showTab('setup')"><span class="tab-icon">⚙️</span> إعداد المعايير</button>
-    <button class="tab" onclick="showTab('upload')"><span class="tab-icon">📎</span> رفع العروض</button>
-    <button class="tab" onclick="showTab('results')"><span class="tab-icon">📊</span> النتائج</button>
+    <button class="tab active" id="tbtn-setup"   onclick="showTab('setup')"  ><span>⚙️</span><span id="tl-setup">إعداد المعايير</span></button>
+    <button class="tab"        id="tbtn-upload"  onclick="showTab('upload')" ><span>📎</span><span id="tl-upload">رفع العروض</span></button>
+    <button class="tab"        id="tbtn-results" onclick="showTab('results')"><span>📊</span><span id="tl-results">النتائج</span></button>
   </div>
 
-  <!-- ═══════════════════════════════════════
-       TAB 1: SETUP
-  ═══════════════════════════════════════ -->
+  <!-- SETUP -->
   <div id="tab-setup" class="section active">
-
     <div class="card">
-      <div class="card-title"><span class="pip"></span> معلومات المناقصة</div>
-      <div class="weight-row" style="margin-bottom:12px">
-        <div class="field" style="flex:2">
-          <label class="lbl">اسم المناقصة / المشروع</label>
-          <input type="text" id="tender-name" value="توريد وتركيب معدات مختبر" placeholder="أدخل اسم المناقصة">
-        </div>
+      <div class="card-title"><span class="pip"></span><span id="lbl-tender-info">معلومات المناقصة</span></div>
+      <div style="margin-bottom:12px">
+        <label class="lbl" id="lbl-tender-name">اسم المناقصة / المشروع</label>
+        <input type="text" id="tender-name" placeholder="أدخل اسم المناقصة">
       </div>
       <div class="weight-row">
         <div class="field">
-          <label class="lbl">وزن التقييم الفني %</label>
+          <label class="lbl" id="lbl-tw">وزن التقييم الفني %</label>
           <input type="number" id="tw" value="60" min="0" max="100" oninput="syncW('tw')" style="text-align:center">
         </div>
         <div class="field">
-          <label class="lbl">وزن التقييم المالي %</label>
+          <label class="lbl" id="lbl-fw">وزن التقييم المالي %</label>
           <input type="number" id="fw" value="40" min="0" max="100" oninput="syncW('fw')" style="text-align:center">
         </div>
       </div>
-      <div class="weight-bar-wrap">
-        <div class="weight-bar">
-          <div class="wb-tech" id="wb-tech" style="width:60%"></div>
-          <div class="wb-fin"  id="wb-fin"  style="width:40%"></div>
-        </div>
-        <div class="weight-labels">
-          <span>فني <span id="tw-lbl">60</span>%</span>
-          <span>مالي <span id="fw-lbl">40</span>%</span>
-        </div>
-        <div id="weight-status" style="font-size:12px;color:var(--green);margin-top:4px">✓ الأوزان صحيحة</div>
+      <div class="weight-bar">
+        <div class="wb-tech" id="wb-tech" style="width:60%"></div>
+        <div class="wb-fin"  id="wb-fin"  style="width:40%"></div>
       </div>
+      <div class="weight-labels">
+        <span><span id="lbl-tech-s">فني</span> <span id="tw-lbl">60</span>%</span>
+        <span><span id="lbl-fin-s">مالي</span> <span id="fw-lbl">40</span>%</span>
+      </div>
+      <div id="weight-status" style="font-size:12px;margin-top:6px;color:var(--green)"></div>
     </div>
 
     <div class="card">
-      <div class="card-title"><span class="pip pip-blue"></span> المعايير الفنية</div>
+      <div class="card-title"><span class="pip pip-blue"></span><span id="lbl-tech-criteria">المعايير الفنية</span></div>
       <div id="tech-list"></div>
-      <button class="btn btn-sm" onclick="addC('tech')" style="margin-top:8px">+ إضافة معيار فني</button>
+      <button class="btn btn-sm" onclick="addC('tech')" style="margin-top:8px" id="btn-add-tech">+ إضافة معيار فني</button>
     </div>
 
     <div class="card">
-      <div class="card-title"><span class="pip pip-gold"></span> المعايير المالية</div>
+      <div class="card-title"><span class="pip pip-gold"></span><span id="lbl-fin-criteria">المعايير المالية</span></div>
       <div id="fin-list"></div>
-      <button class="btn btn-sm" onclick="addC('fin')" style="margin-top:8px">+ إضافة معيار مالي</button>
+      <button class="btn btn-sm" onclick="addC('fin')" style="margin-top:8px" id="btn-add-fin">+ إضافة معيار مالي</button>
     </div>
 
     <div style="text-align:center;margin-top:1.5rem">
-      <button class="btn btn-teal" onclick="goTo('upload')">التالي: رفع عروض الموردين ←</button>
+      <button class="btn btn-teal" onclick="goTo('upload')" id="btn-next">التالي: رفع عروض الموردين ←</button>
     </div>
   </div>
 
-  <!-- ═══════════════════════════════════════
-       TAB 2: UPLOAD
-  ═══════════════════════════════════════ -->
+  <!-- UPLOAD -->
   <div id="tab-upload" class="section">
-
     <div class="card">
-      <div class="card-title"><span class="pip"></span> رفع ملفات PDF للموردين</div>
+      <div class="card-title"><span class="pip"></span><span id="lbl-upload-title">رفع ملفات PDF للموردين</span></div>
       <div class="upload-zone" id="drop-zone">
         <input type="file" id="file-input" multiple accept=".pdf" onchange="handleFiles(this.files)">
         <div class="upload-icon-wrap">📄</div>
-        <h3>اسحب ملفات PDF هنا أو اضغط للاختيار</h3>
-        <p style="margin-top:6px">يمكنك رفع عدة ملفات دفعة واحدة &bull; كل PDF = مورّد واحد</p>
-        <p style="margin-top:4px;font-size:12px;color:var(--t3)">يعمل مع أي PDF يحتوي على نص قابل للنسخ</p>
+        <h3 id="upload-h">اسحب ملفات PDF هنا أو اضغط للاختيار</h3>
+        <p id="upload-p" style="margin-top:6px">يمكنك رفع عدة ملفات دفعة واحدة — كل PDF = مورّد واحد</p>
+        <p id="upload-note" style="margin-top:4px;font-size:12px;color:var(--t3)">يعمل مع أي PDF يحتوي على نص قابل للنسخ</p>
       </div>
     </div>
-
     <div id="suppliers-section" style="display:none">
       <div class="card">
-        <div class="card-title"><span class="pip"></span> الموردون <span id="sup-count" style="color:var(--teal);margin-right:4px"></span></div>
+        <div class="card-title"><span class="pip"></span><span id="lbl-suppliers">الموردون</span> <span id="sup-count" style="color:var(--teal);margin-inline-start:4px"></span></div>
         <div id="supplier-list"></div>
       </div>
-
       <div class="action-bar">
-        <div class="action-bar-info" id="analyze-status">جاهز للتحليل التلقائي</div>
-        <button class="btn btn-teal" id="analyze-btn" onclick="analyzeAll()">
-          🤖 تحليل وتقييم جميع العروض
-        </button>
+        <div class="action-bar-info" id="analyze-status">جاهز للتحليل</div>
+        <button class="btn btn-teal" id="analyze-btn" onclick="analyzeAll()">🤖 تحليل وتقييم جميع العروض</button>
       </div>
     </div>
   </div>
 
-  <!-- ═══════════════════════════════════════
-       TAB 3: RESULTS
-  ═══════════════════════════════════════ -->
+  <!-- RESULTS -->
   <div id="tab-results" class="section">
     <div id="results-content">
-      <div class="empty">
-        <div class="empty-icon">📊</div>
-        <p>لم يتم التحليل بعد<br>ارفع العروض وابدأ التقييم من تبويب "رفع العروض"</p>
-      </div>
+      <div class="empty"><div class="empty-icon">📊</div><p id="lbl-no-results">لم يتم التحليل بعد. ارفع العروض وابدأ التقييم.</p></div>
     </div>
   </div>
 
   <footer>
-    صُمّم بـ ❤️ لفريق المشتريات &bull; مدعوم بـ <span>Claude AI</span>
+    <span id="footer-txt">صُمّم بـ ❤️ لفريق المشتريات — مدعوم بـ <span>Claude AI</span></span>
   </footer>
-</div><!-- /app -->
+</div>
 
-<!-- ═══════════════════════════════════════
-     JAVASCRIPT
-═══════════════════════════════════════ -->
 <script>
-pdfjsLib.GlobalWorkerOptions.workerSrc =
-  'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+/* ── Translations ── */
+const TR = {
+  ar:{
+    flag:'🇬🇧', langLabel:'English',
+    hTitle:'تقييم <span>المناقصات</span><br>بالذكاء الاصطناعي',
+    hSub:'تحليل عروض الموردين فنياً ومالياً — تلقائي وذكي',
+    tSetup:'إعداد المعايير', tUpload:'رفع العروض', tResults:'النتائج',
+    tenderInfo:'معلومات المناقصة', tenderNameLbl:'اسم المناقصة / المشروع',
+    tenderPH:'أدخل اسم المناقصة',
+    twLbl:'وزن التقييم الفني %', fwLbl:'وزن التقييم المالي %',
+    techS:'فني', finS:'مالي',
+    wOk:'✓ الأوزان صحيحة', wErr:'⚠ المجموع %t% — يجب 100%',
+    techCriteria:'المعايير الفنية', finCriteria:'المعايير المالية',
+    addTech:'+ إضافة معيار فني', addFin:'+ إضافة معيار مالي',
+    newCrit:'معيار جديد', critPH:'اسم المعيار',
+    sumOk:'المجموع: %v% ✓ صحيح', sumErr:'المجموع: %v% — يجب 100%',
+    btnNext:'التالي: رفع عروض الموردين ←',
+    uploadTitle:'رفع ملفات PDF للموردين',
+    uploadH:'اسحب ملفات PDF هنا أو اضغط للاختيار',
+    uploadP:'يمكنك رفع عدة ملفات دفعة واحدة — كل PDF = مورّد واحد',
+    uploadNote:'يعمل مع أي PDF يحتوي على نص قابل للنسخ',
+    suppliersLbl:'الموردون',
+    ready:'جاهز للتحليل', analyzing:'🔄 جاري التحليل…', done:'✅ اكتمل التحليل',
+    analyzeBtn:'🤖 تحليل وتقييم جميع العروض',
+    noResults:'لم يتم التحليل بعد. ارفع العروض وابدأ التقييم.',
+    sPending:'⏳ في الانتظار', sLoading:'📖 يقرأ الملف…', sAnalyzing:'🤖 يحلّل…', sDone:'✅ تم', sError:'❌ خطأ',
+    resultTitle:'نتائج تقييم',
+    mSuppliers:'موردون مقيّمون', mTechW:'وزن التقييم الفني', mFinW:'وزن التقييم المالي', mTop:'أعلى نقاط',
+    winnerLabel:'⭐ الأفضل — يُنصح بالترسية',
+    scoreTech:'🔧 الفني', scoreFin:'💰 المالي', scoreTotal:'📊 المجموع النهائي',
+    breakdownBtn:'▶ تفاصيل النقاط لكل معيار',
+    bdTech:'المعايير الفنية', bdFin:'المعايير المالية',
+    aiSum:'📝 ملخص التقييم:', aiStr:'✅ نقاط القوة:', aiWeak:'⚠️ نقاط الضعف / المخاطر:',
+    ctaReport:'📄 طلب تقرير رسمي ↗', ctaWinner:'✉️ رسالة ترسية للفائز ↗', ctaLosers:'📨 رسائل المرفوضين ↗',
+    noAnalysis:'لم ينجح تحليل أي مورّد. تحقق من صيغة الملفات.',
+    alertUpload:'ارفع ملفات PDF أولاً',
+    footer:'صُمّم بـ ❤️ لفريق المشتريات — مدعوم بـ <span>Claude AI</span>',
+    aiIntro:'أنت خبير متخصص في تقييم المناقصات والمشتريات.',
+    aiTender:'اسم المناقصة', aiText:'نص عرض المورّد',
+    aiEval:'قيّم هذا العرض بدقة وأعطِ نقاطاً من 0 إلى 100 لكل معيار.',
+    aiTechC:'المعايير الفنية', aiFinC:'المعايير المالية', aiW:'الوزن',
+    aiJson:'أجب فقط بـ JSON صحيح بدون أي نص إضافي',
+    aiSumField:'ملخص تقييم شامل 2-3 جمل',
+    aiStrField:'أهم نقاط القوة', aiWeakField:'أهم نقاط الضعف أو المخاطر',
+    promptReport:'اكتب تقرير تقييم مناقصة رسمي: الفائز %w بنقاط %s/100 من %n موردين',
+    promptWinner:'اكتب رسالة رسمية لإخبار المورد الفائز %w بترسية المناقصة عليه',
+    promptLosers:'اكتب رسائل احترافية لإبلاغ الموردين غير الفائزين مع الشكر'
+  },
+  en:{
+    flag:'🇸🇦', langLabel:'العربية',
+    hTitle:'Tender <span>Evaluation</span><br>Powered by AI',
+    hSub:'Technical & financial analysis of supplier bids — automatic and intelligent',
+    tSetup:'Setup Criteria', tUpload:'Upload Bids', tResults:'Results',
+    tenderInfo:'Tender Information', tenderNameLbl:'Tender / Project Name',
+    tenderPH:'Enter tender / project name',
+    twLbl:'Technical Weight %', fwLbl:'Financial Weight %',
+    techS:'Technical', finS:'Financial',
+    wOk:'✓ Weights are valid', wErr:'⚠ Total is %t% — must equal 100%',
+    techCriteria:'Technical Criteria', finCriteria:'Financial Criteria',
+    addTech:'+ Add Technical Criterion', addFin:'+ Add Financial Criterion',
+    newCrit:'New Criterion', critPH:'Criterion name',
+    sumOk:'Total: %v% ✓ Valid', sumErr:'Total: %v% — must equal 100%',
+    btnNext:'Next: Upload Supplier Bids →',
+    uploadTitle:'Upload Supplier PDF Files',
+    uploadH:'Drag PDF files here or click to select',
+    uploadP:'Upload multiple files at once — each PDF = one supplier',
+    uploadNote:'Works with any PDF containing selectable text',
+    suppliersLbl:'Suppliers',
+    ready:'Ready to analyze', analyzing:'🔄 Analyzing…', done:'✅ Analysis complete',
+    analyzeBtn:'🤖 Analyze & Evaluate All Bids',
+    noResults:'No analysis yet. Upload bids and start evaluation.',
+    sPending:'⏳ Pending', sLoading:'📖 Reading…', sAnalyzing:'🤖 Analyzing…', sDone:'✅ Done', sError:'❌ Error',
+    resultTitle:'Evaluation Results',
+    mSuppliers:'Suppliers Evaluated', mTechW:'Technical Weight', mFinW:'Financial Weight', mTop:'Top Score',
+    winnerLabel:'⭐ Best Bid — Recommended for Award',
+    scoreTech:'🔧 Technical', scoreFin:'💰 Financial', scoreTotal:'📊 Final Total',
+    breakdownBtn:'▶ Score Details per Criterion',
+    bdTech:'Technical Criteria', bdFin:'Financial Criteria',
+    aiSum:'📝 Evaluation Summary:', aiStr:'✅ Strengths:', aiWeak:'⚠️ Weaknesses / Risks:',
+    ctaReport:'📄 Request Official Report ↗', ctaWinner:'✉️ Award Letter to Winner ↗', ctaLosers:'📨 Rejection Letters ↗',
+    noAnalysis:'No supplier analysis succeeded. Check the file formats.',
+    alertUpload:'Please upload PDF files first',
+    footer:'Built with ❤️ for Procurement Teams — Powered by <span>Claude AI</span>',
+    aiIntro:'You are an expert in tender and procurement evaluation.',
+    aiTender:'Tender Name', aiText:'Supplier Proposal Text',
+    aiEval:'Evaluate this proposal accurately, scoring from 0 to 100 for each criterion.',
+    aiTechC:'Technical Criteria', aiFinC:'Financial Criteria', aiW:'Weight',
+    aiJson:'Respond ONLY with valid JSON, no extra text or markdown',
+    aiSumField:'Comprehensive evaluation summary in 2-3 sentences',
+    aiStrField:'Key strengths', aiWeakField:'Key weaknesses or risks',
+    promptReport:'Write an official tender evaluation report: Winner %w scored %s/100 out of %n suppliers',
+    promptWinner:'Write a formal award letter to winning supplier %w notifying them of contract award',
+    promptLosers:'Write professional rejection letters to notify unsuccessful suppliers with appreciation'
+  }
+};
+
+let lang='ar';
+function T(k){return TR[lang][k]||TR.ar[k]||k}
+
+/* ── Apply language ── */
+function applyLang(){
+  const isAr=lang==='ar';
+  document.documentElement.lang=lang;
+  document.documentElement.dir=isAr?'rtl':'ltr';
+  document.body.className=isAr?'':'en';
+
+  document.getElementById('lang-flag').textContent=T('flag');
+  document.getElementById('lang-label').textContent=T('langLabel');
+  document.getElementById('h-title').innerHTML=T('hTitle');
+  document.getElementById('h-sub').textContent=T('hSub');
+  document.getElementById('tl-setup').textContent=T('tSetup');
+  document.getElementById('tl-upload').textContent=T('tUpload');
+  document.getElementById('tl-results').textContent=T('tResults');
+  document.getElementById('lbl-tender-info').textContent=T('tenderInfo');
+  document.getElementById('lbl-tender-name').textContent=T('tenderNameLbl');
+  document.getElementById('tender-name').placeholder=T('tenderPH');
+  document.getElementById('lbl-tw').textContent=T('twLbl');
+  document.getElementById('lbl-fw').textContent=T('fwLbl');
+  document.getElementById('lbl-tech-s').textContent=T('techS');
+  document.getElementById('lbl-fin-s').textContent=T('finS');
+  document.getElementById('lbl-tech-criteria').textContent=T('techCriteria');
+  document.getElementById('lbl-fin-criteria').textContent=T('finCriteria');
+  document.getElementById('btn-add-tech').textContent=T('addTech');
+  document.getElementById('btn-add-fin').textContent=T('addFin');
+  document.getElementById('btn-next').textContent=T('btnNext');
+  document.getElementById('lbl-upload-title').textContent=T('uploadTitle');
+  document.getElementById('upload-h').textContent=T('uploadH');
+  document.getElementById('upload-p').textContent=T('uploadP');
+  document.getElementById('upload-note').textContent=T('uploadNote');
+  document.getElementById('lbl-suppliers').textContent=T('suppliersLbl');
+  document.getElementById('analyze-btn').textContent=T('analyzeBtn');
+  document.getElementById('analyze-status').textContent=T('ready');
+  document.getElementById('footer-txt').innerHTML=T('footer');
+
+  syncW('tw');
+  renderC('tech');
+  renderC('fin');
+  renderSuppliers();
+}
+
+function toggleLang(){lang=lang==='ar'?'en':'ar';applyLang();}
 
 /* ── State ── */
-let techCriteria = [
-  {id:1, name:'الخبرة والسجل التجاري',        weight:25},
-  {id:2, name:'جودة المواصفات التقنية',         weight:35},
-  {id:3, name:'شهادات الجودة والاعتماد',        weight:20},
-  {id:4, name:'خطة التنفيذ وجدول التسليم',      weight:20}
+let techCriteria=[
+  {id:1,nameAr:'الخبرة والسجل التجاري',      nameEn:'Experience & Track Record',      weight:25},
+  {id:2,nameAr:'جودة المواصفات التقنية',       nameEn:'Technical Specification Quality', weight:35},
+  {id:3,nameAr:'شهادات الجودة والاعتماد',      nameEn:'Quality Certifications',          weight:20},
+  {id:4,nameAr:'خطة التنفيذ وجدول التسليم',    nameEn:'Implementation Plan & Timeline',  weight:20}
 ];
-let finCriteria = [
-  {id:1, name:'السعر الإجمالي',                 weight:50},
-  {id:2, name:'شروط الدفع والضمانات',           weight:30},
-  {id:3, name:'التكاليف الإضافية',              weight:20}
+let finCriteria=[
+  {id:1,nameAr:'السعر الإجمالي',              nameEn:'Total Price',                     weight:50},
+  {id:2,nameAr:'شروط الدفع والضمانات',        nameEn:'Payment Terms & Warranties',      weight:30},
+  {id:3,nameAr:'التكاليف الإضافية',           nameEn:'Additional / Hidden Costs',       weight:20}
 ];
-let suppliers = [];
-let cidT = 5, cidF = 4;
+let suppliers=[], cidT=5, cidF=4;
+function cName(c){return lang==='ar'?(c.nameAr||''):(c.nameEn||c.nameAr||'');}
 
-/* ── Criteria rendering ── */
-function renderC(type) {
-  const list  = type==='tech' ? techCriteria : finCriteria;
-  const total = list.reduce((a,c)=>a+(parseInt(c.weight)||0),0);
-  const el    = document.getElementById(type+'-list');
-  el.innerHTML = list.map(c=>`
+/* ── Criteria ── */
+function renderC(type){
+  const list=type==='tech'?techCriteria:finCriteria;
+  const total=list.reduce((a,c)=>a+(parseInt(c.weight)||0),0);
+  const el=document.getElementById(type+'-list');
+  el.innerHTML=list.map(c=>`
     <div class="criteria-row">
-      <input type="text"   value="${c.name}"   onchange="upC('${type}',${c.id},'name',this.value)"   placeholder="اسم المعيار">
-      <input type="number" value="${c.weight}" onchange="upC('${type}',${c.id},'weight',this.value)" class="w-input" min="0" max="100" placeholder="وزن">
+      <input type="text" value="${cName(c)}" placeholder="${T('critPH')}"
+        onchange="upCName('${type}',${c.id},this.value)">
+      <input type="number" value="${c.weight}" min="0" max="100" class="w-input"
+        onchange="upC('${type}',${c.id},'weight',this.value)">
       <span style="font-size:12px;color:var(--t3)">%</span>
       <button class="btn btn-sm btn-danger" onclick="delC('${type}',${c.id})">✕</button>
-    </div>`).join('') +
-    `<div class="criteria-sum ${total===100?'sum-ok':'sum-err'}">
-      المجموع: ${total}% ${total===100?'✓ صحيح':'— يجب أن يكون 100%'}
-    </div>`;
-}
-function upC(t,id,k,v){
-  const list=(t==='tech'?techCriteria:finCriteria);
-  const c=list.find(x=>x.id===id);
-  if(c) c[k]=k==='weight'?parseInt(v)||0:v;
-  renderC(t);
-}
-function delC(t,id){
-  if(t==='tech')techCriteria=techCriteria.filter(c=>c.id!==id);
-  else finCriteria=finCriteria.filter(c=>c.id!==id);
-  renderC(t);
-}
-function addC(t){
-  if(t==='tech')techCriteria.push({id:cidT++,name:'معيار جديد',weight:0});
-  else finCriteria.push({id:cidF++,name:'معيار جديد',weight:0});
-  renderC(t);
+    </div>`).join('');
+  const sumTpl=total===100?T('sumOk'):T('sumErr');
+  el.innerHTML+=`<div class="criteria-sum ${total===100?'sum-ok':'sum-err'}">${sumTpl.replace('%v%',total)}</div>`;
 }
 
-/* ── Weight sync ── */
+function upCName(type,id,val){
+  const c=(type==='tech'?techCriteria:finCriteria).find(x=>x.id===id);
+  if(!c)return;
+  if(lang==='ar')c.nameAr=val; else c.nameEn=val;
+}
+function upC(type,id,key,val){
+  const c=(type==='tech'?techCriteria:finCriteria).find(x=>x.id===id);
+  if(c)c[key]=key==='weight'?parseInt(val)||0:val;
+  renderC(type);
+}
+function delC(type,id){
+  if(type==='tech')techCriteria=techCriteria.filter(c=>c.id!==id);
+  else finCriteria=finCriteria.filter(c=>c.id!==id);
+  renderC(type);
+}
+function addC(type){
+  const nc={id:type==='tech'?cidT++:cidF++,nameAr:'معيار جديد',nameEn:'New Criterion',weight:0};
+  if(type==='tech')techCriteria.push(nc); else finCriteria.push(nc);
+  renderC(type);
+}
+
+/* ── Weights ── */
 function syncW(changed){
-  const tw=document.getElementById('tw');
-  const fw=document.getElementById('fw');
+  const tw=document.getElementById('tw'), fw=document.getElementById('fw');
   const v=parseInt(changed==='tw'?tw.value:fw.value)||0;
   const other=Math.max(0,Math.min(100,100-v));
   if(changed==='tw')fw.value=other; else tw.value=other;
-  const t=parseInt(tw.value)||0;
-  const f=parseInt(fw.value)||0;
-  document.getElementById('wb-tech').style.width=t+'%';
-  document.getElementById('wb-fin').style.width=f+'%';
-  document.getElementById('tw-lbl').textContent=t;
-  document.getElementById('fw-lbl').textContent=f;
-  const ok=t+f===100;
+  const tv=parseInt(tw.value)||0, fv=parseInt(fw.value)||0;
+  document.getElementById('wb-tech').style.width=tv+'%';
+  document.getElementById('wb-fin').style.width=fv+'%';
+  document.getElementById('tw-lbl').textContent=tv;
+  document.getElementById('fw-lbl').textContent=fv;
+  const ok=tv+fv===100;
   const ws=document.getElementById('weight-status');
-  ws.textContent=ok?'✓ الأوزان صحيحة':'⚠ المجموع '+(t+f)+'% — يجب 100%';
+  ws.textContent=ok?T('wOk'):T('wErr').replace('%t%',tv+fv);
   ws.style.color=ok?'var(--green)':'var(--red)';
 }
 
-/* ── Tab switching ── */
-function showTab(t){
-  ['setup','upload','results'].forEach((id,i)=>{
-    document.querySelectorAll('.tab')[i].classList.toggle('active',id===t);
-    document.getElementById('tab-'+id).classList.toggle('active',id===t);
+/* ── Tabs ── */
+function showTab(name){
+  ['setup','upload','results'].forEach(id=>{
+    document.getElementById('tbtn-'+id).classList.toggle('active',id===name);
+    document.getElementById('tab-'+id).classList.toggle('active',id===name);
   });
 }
-function goTo(t){showTab(t);}
+function goTo(name){showTab(name);}
 
-/* ── File handling ── */
+/* ── Files ── */
 async function handleFiles(files){
-  for(const file of files){
-    if(!file.name.toLowerCase().endsWith('.pdf')) continue;
-    if(suppliers.find(s=>s.fname===file.name)) continue;
-    suppliers.push({
-      id:Date.now()+Math.random(),
-      fname:file.name,
-      display:file.name.replace(/\.pdf$/i,''),
-      file, text:'', status:'pending',
-      aiResult:null, totalTech:0, totalFin:0, total:0
-    });
+  for(const f of files){
+    if(!f.name.toLowerCase().endsWith('.pdf'))continue;
+    if(suppliers.find(s=>s.fname===f.name))continue;
+    suppliers.push({id:Date.now()+Math.random(),fname:f.name,display:f.name.replace(/\.pdf$/i,''),file:f,text:'',status:'pending',aiResult:null,totalTech:0,totalFin:0,total:0});
   }
   renderSuppliers();
   document.getElementById('suppliers-section').style.display=suppliers.length?'block':'none';
@@ -798,21 +518,12 @@ function renderSuppliers(){
   const sl=document.getElementById('supplier-list');
   document.getElementById('sup-count').textContent='('+suppliers.length+')';
   if(!suppliers.length){sl.innerHTML='';return;}
-  const smap={
-    pending:  ['s-pending',  '⏳ في الانتظار'],
-    loading:  ['s-loading',  '📖 يقرأ الملف…'],
-    analyzing:['s-analyzing','🤖 يحلّل…'],
-    done:     ['s-done',     '✅ تم'],
-    error:    ['s-error',    '❌ خطأ']
-  };
+  const sm={pending:['s-pending',T('sPending')],loading:['s-loading',T('sLoading')],analyzing:['s-analyzing',T('sAnalyzing')],done:['s-done',T('sDone')],error:['s-error',T('sError')]};
   sl.innerHTML=suppliers.map(s=>{
-    const [cls,lbl]=smap[s.status]||smap.pending;
+    const[cls,lbl]=sm[s.status]||sm.pending;
     return`<div class="supplier-card">
       <div class="sup-avatar">📄</div>
-      <div class="sup-info">
-        <div class="sup-name">${s.display}</div>
-        <div class="sup-meta">${(s.file.size/1024).toFixed(0)} KB</div>
-      </div>
+      <div class="sup-info"><div class="sup-name">${s.display}</div><div class="sup-meta">${(s.file.size/1024).toFixed(0)} KB</div></div>
       <span class="status-badge ${cls}">${lbl}</span>
       <button class="btn btn-sm btn-danger" onclick="removeS('${s.id}')">✕</button>
     </div>`;
@@ -822,10 +533,10 @@ function renderSuppliers(){
 function removeS(id){
   suppliers=suppliers.filter(s=>s.id!=id);
   renderSuppliers();
-  if(!suppliers.length) document.getElementById('suppliers-section').style.display='none';
+  if(!suppliers.length)document.getElementById('suppliers-section').style.display='none';
 }
 
-/* ── PDF text extraction ── */
+/* ── PDF ── */
 async function extractText(file){
   const buf=await file.arrayBuffer();
   const pdf=await pdfjsLib.getDocument({data:buf}).promise;
@@ -839,228 +550,143 @@ async function extractText(file){
   return text.trim();
 }
 
-/* ── Claude API call ── */
+/* ── AI ── */
 async function analyzeWithAI(sup){
-  const tenderName=document.getElementById('tender-name').value||'المناقصة';
-  const techList=techCriteria.map(c=>`- ${c.name} (الوزن: ${c.weight}%)`).join('\n');
-  const finList =finCriteria.map( c=>`- ${c.name} (الوزن: ${c.weight}%)`).join('\n');
+  const tName=document.getElementById('tender-name').value||'Tender';
+  const techList=techCriteria.map(c=>`- ${cName(c)} (${T('aiW')}: ${c.weight}%)`).join('\n');
+  const finList=finCriteria.map(c=>`- ${cName(c)} (${T('aiW')}: ${c.weight}%)`).join('\n');
+  const prompt=`${T('aiIntro')}
 
-  const prompt=`أنت خبير متخصص في تقييم المناقصات والمشتريات الحكومية والخاصة.
+${T('aiTender')}: "${tName}"
 
-اسم المناقصة: "${tenderName}"
-
-نص عرض المورّد:
+${T('aiText')}:
 ---
 ${sup.text.slice(0,7000)}
 ---
 
-قيّم هذا العرض بدقة بناءً على المعايير التالية، وأعطِ نقاطاً من 0 إلى 100 لكل معيار.
+${T('aiEval')}
 
-المعايير الفنية:
+${T('aiTechC')}:
 ${techList}
 
-المعايير المالية:
+${T('aiFinC')}:
 ${finList}
 
-أجب فقط بـ JSON صحيح بدون أي نص أو markdown إضافي:
-{
-  "tech": { ${techCriteria.map(c=>`"${c.id}": 0`).join(', ')} },
-  "fin":  { ${finCriteria.map( c=>`"${c.id}": 0`).join(', ')} },
-  "summary":   "ملخص تقييم شامل 2-3 جمل",
-  "strengths": "أهم نقاط القوة",
-  "weaknesses":"أهم نقاط الضعف أو المخاطر"
-}`;
+${T('aiJson')}:
+{"tech":{${techCriteria.map(c=>`"${c.id}":0`).join(',')}},"fin":{${finCriteria.map(c=>`"${c.id}":0`).join(',')}},"summary":"${T('aiSumField')}","strengths":"${T('aiStrField')}","weaknesses":"${T('aiWeakField')}"}`;
 
   const res=await fetch('https://api.anthropic.com/v1/messages',{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({
-      model:'claude-sonnet-4-20250514',
-      max_tokens:1200,
-      messages:[{role:'user',content:prompt}]
-    })
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1200,messages:[{role:'user',content:prompt}]})
   });
   const data=await res.json();
   const raw=data.content?.map(b=>b.text||'').join('');
   return JSON.parse(raw.replace(/```json|```/g,'').trim());
 }
 
-/* ── Main analyze loop ── */
+/* ── Analyze All ── */
 async function analyzeAll(){
-  if(!suppliers.length){alert('ارفع ملفات PDF أولاً');return;}
+  if(!suppliers.length){alert(T('alertUpload'));return;}
   const btn=document.getElementById('analyze-btn');
   btn.disabled=true;
-  document.getElementById('analyze-status').textContent='🔄 جاري التحليل…';
-
+  document.getElementById('analyze-status').textContent=T('analyzing');
   const tw=(parseInt(document.getElementById('tw').value)||60)/100;
   const fw=(parseInt(document.getElementById('fw').value)||40)/100;
-
   for(const sup of suppliers){
     try{
-      sup.status='loading'; renderSuppliers();
+      sup.status='loading';renderSuppliers();
       sup.text=await extractText(sup.file);
-
-      sup.status='analyzing'; renderSuppliers();
+      sup.status='analyzing';renderSuppliers();
       const r=await analyzeWithAI(sup);
       sup.aiResult=r;
-
       sup.totalTech=techCriteria.reduce((s,c)=>s+((r.tech?.[c.id]||0)*(c.weight/100)),0);
-      sup.totalFin =finCriteria.reduce( (s,c)=>s+((r.fin?.[c.id] ||0)*(c.weight/100)),0);
+      sup.totalFin=finCriteria.reduce((s,c)=>s+((r.fin?.[c.id]||0)*(c.weight/100)),0);
       sup.total=sup.totalTech*tw+sup.totalFin*fw;
       sup.status='done';
-    } catch(e){
-      sup.status='error';
-      console.error(e);
-    }
+    }catch(e){sup.status='error';console.error(e);}
     renderSuppliers();
   }
-
   btn.disabled=false;
-  document.getElementById('analyze-status').textContent='✅ اكتمل التحليل';
+  document.getElementById('analyze-status').textContent=T('done');
   renderResults(tw,fw);
   goTo('results');
 }
 
-/* ── Results rendering ── */
+/* ── Results ── */
 function renderResults(tw,fw){
   const done=suppliers.filter(s=>s.status==='done');
   if(!done.length){
-    document.getElementById('results-content').innerHTML=
-      `<div class="empty"><div class="empty-icon">⚠️</div><p>لم ينجح تحليل أي مورّد. تحقق من صيغة الملفات.</p></div>`;
+    document.getElementById('results-content').innerHTML=`<div class="empty"><div class="empty-icon">⚠️</div><p>${T('noAnalysis')}</p></div>`;
     return;
   }
   const ranked=[...done].sort((a,b)=>b.total-a.total);
-  const tName=document.getElementById('tender-name').value||'المناقصة';
-  const rankIcons=['🥇','🥈','🥉'];
-  const rankClasses=['rk1','rk2','rk3'];
+  const tName=document.getElementById('tender-name').value||'—';
+  const rkIcons=['🥇','🥈','🥉'], rkCls=['rk1','rk2','rk3'];
 
-  // ── Metrics summary
-  let html=`
-    <div class="card">
-      <div class="card-title"><span class="pip"></span> نتائج تقييم: ${tName}</div>
-      <div class="metrics-grid">
-        <div class="metric-card">
-          <div class="metric-val">${done.length}</div>
-          <div class="metric-lbl">موردون مقيّمون</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-val" style="color:var(--blue)">${(tw*100).toFixed(0)}%</div>
-          <div class="metric-lbl">وزن التقييم الفني</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-val" style="color:var(--gold)">${(fw*100).toFixed(0)}%</div>
-          <div class="metric-lbl">وزن التقييم المالي</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-val">${ranked[0]?.total.toFixed(1)}</div>
-          <div class="metric-lbl">أعلى نقاط</div>
-        </div>
-      </div>
-    </div>`;
+  let html=`<div class="card">
+    <div class="card-title"><span class="pip"></span>${T('resultTitle')}: ${tName}</div>
+    <div class="metrics-grid">
+      <div class="metric-card"><div class="metric-val">${done.length}</div><div class="metric-lbl">${T('mSuppliers')}</div></div>
+      <div class="metric-card"><div class="metric-val" style="color:var(--blue)">${(tw*100).toFixed(0)}%</div><div class="metric-lbl">${T('mTechW')}</div></div>
+      <div class="metric-card"><div class="metric-val" style="color:var(--gold)">${(fw*100).toFixed(0)}%</div><div class="metric-lbl">${T('mFinW')}</div></div>
+      <div class="metric-card"><div class="metric-val">${ranked[0]?.total.toFixed(1)}</div><div class="metric-lbl">${T('mTop')}</div></div>
+    </div></div>`;
 
-  // ── Ranked cards
   ranked.forEach((s,i)=>{
     const r=s.aiResult;
-    const rkCls=rankClasses[i]||'rkn';
-    const rkIcon=rankIcons[i]||(i+1);
-    html+=`
-    <div class="result-card ${i===0?'winner':''}">
+    html+=`<div class="result-card ${i===0?'winner':''}">
       <div class="result-header">
-        <div class="rank-badge ${rkCls}">${rkIcon}</div>
+        <div class="rank-badge ${rkCls[i]||'rkn'}">${rkIcons[i]||(i+1)}</div>
         <div style="flex:1;min-width:0">
           <div class="result-name">${s.display}</div>
-          ${i===0?'<div class="winner-label">⭐ الأفضل — يُنصح بالترسية</div>':''}
+          ${i===0?`<div class="winner-label">${T('winnerLabel')}</div>`:''}
         </div>
         <div class="result-total">${s.total.toFixed(1)}<span>/100</span></div>
       </div>
       <div class="result-body">
-
         <div class="score-row">
-          <div class="score-label-row">
-            <span>🔧 الفني (${(tw*100).toFixed(0)}%)</span>
-            <span style="color:#818cf8;font-weight:700">${s.totalTech.toFixed(1)}</span>
-          </div>
+          <div class="score-label-row"><span>${T('scoreTech')} (${(tw*100).toFixed(0)}%)</span><span style="color:#818cf8;font-weight:700">${s.totalTech.toFixed(1)}</span></div>
           <div class="score-track"><div class="sf-tech" style="width:${s.totalTech.toFixed(1)}%"></div></div>
         </div>
-
         <div class="score-row">
-          <div class="score-label-row">
-            <span>💰 المالي (${(fw*100).toFixed(0)}%)</span>
-            <span style="color:var(--gold);font-weight:700">${s.totalFin.toFixed(1)}</span>
-          </div>
+          <div class="score-label-row"><span>${T('scoreFin')} (${(fw*100).toFixed(0)}%)</span><span style="color:var(--gold);font-weight:700">${s.totalFin.toFixed(1)}</span></div>
           <div class="score-track"><div class="sf-fin" style="width:${s.totalFin.toFixed(1)}%"></div></div>
         </div>
-
         <div class="score-row">
-          <div class="score-label-row">
-            <span>📊 المجموع النهائي</span>
-            <span style="color:var(--teal);font-weight:700">${s.total.toFixed(1)}</span>
-          </div>
+          <div class="score-label-row"><span>${T('scoreTotal')}</span><span style="color:var(--teal);font-weight:700">${s.total.toFixed(1)}</span></div>
           <div class="score-track"><div class="sf-total" style="width:${s.total.toFixed(1)}%"></div></div>
         </div>
-
         <details style="margin-top:12px">
-          <summary style="font-size:12px;color:var(--t3);cursor:pointer;user-select:none;padding:4px 0">
-            ▶ تفاصيل النقاط لكل معيار
-          </summary>
+          <summary style="font-size:12px;color:var(--t3);cursor:pointer;user-select:none;padding:4px 0">${T('breakdownBtn')}</summary>
           <div class="criteria-breakdown" style="margin-top:8px">
-            <div class="bd-section-title">المعايير الفنية</div>
-            ${techCriteria.map(c=>`
-              <div class="bd-row">
-                <span class="bd-name">${c.name} <span style="color:var(--t3)">(${c.weight}%)</span></span>
-                <span class="bd-score" style="color:#818cf8">${r?.tech?.[c.id]??'-'}/100</span>
-              </div>`).join('')}
-            <div class="bd-section-title" style="margin-top:10px">المعايير المالية</div>
-            ${finCriteria.map(c=>`
-              <div class="bd-row">
-                <span class="bd-name">${c.name} <span style="color:var(--t3)">(${c.weight}%)</span></span>
-                <span class="bd-score" style="color:var(--gold)">${r?.fin?.[c.id]??'-'}/100</span>
-              </div>`).join('')}
+            <div class="bd-section-title">${T('bdTech')}</div>
+            ${techCriteria.map(c=>`<div class="bd-row"><span class="bd-name">${cName(c)} <span style="color:var(--t3)">(${c.weight}%)</span></span><span class="bd-score" style="color:#818cf8">${r?.tech?.[c.id]??'-'}/100</span></div>`).join('')}
+            <div class="bd-section-title" style="margin-top:10px">${T('bdFin')}</div>
+            ${finCriteria.map(c=>`<div class="bd-row"><span class="bd-name">${cName(c)} <span style="color:var(--t3)">(${c.weight}%)</span></span><span class="bd-score" style="color:var(--gold)">${r?.fin?.[c.id]??'-'}/100</span></div>`).join('')}
           </div>
         </details>
-
-        ${r?.summary?`
-        <div class="analysis-box">
-<strong>📝 ملخص التقييم:</strong>
-${r.summary}
-
-<strong>✅ نقاط القوة:</strong>
-${r.strengths}
-
-<strong>⚠️ نقاط الضعف / المخاطر:</strong>
-${r.weaknesses}
-        </div>`:''}
-
-      </div>
-    </div>`;
+        ${r?.summary?`<div class="analysis-box"><strong>${T('aiSum')}</strong>\n${r.summary}\n\n<strong>${T('aiStr')}</strong>\n${r.strengths}\n\n<strong>${T('aiWeak')}</strong>\n${r.weaknesses}</div>`:''}
+      </div></div>`;
   });
 
-  // ── CTA buttons
-  html+=`
-    <div class="cta-row">
-      <button class="btn" onclick="window.sendPrompt&&window.sendPrompt('اكتب تقرير تقييم مناقصة رسمي بناءً على النتائج: الفائز ${ranked[0]?.display} بنقاط ${ranked[0]?.total.toFixed(1)}/100 من ${done.length} موردين')">
-        📄 طلب تقرير رسمي ↗
-      </button>
-      <button class="btn" onclick="window.sendPrompt&&window.sendPrompt('اكتب رسالة رسمية لإخبار المورد الفائز ${ranked[0]?.display} بترسية المناقصة عليه بأسلوب احترافي')">
-        ✉️ رسالة ترسية للفائز ↗
-      </button>
-      <button class="btn" onclick="window.sendPrompt&&window.sendPrompt('اكتب رسائل احترافية لإبلاغ الموردين غير الفائزين بنتيجة المناقصة مع الشكر على مشاركتهم')">
-        📨 رسائل المرفوضين ↗
-      </button>
-    </div>`;
+  const w0=ranked[0];
+  html+=`<div class="cta-row">
+    <button class="btn" onclick="window.sendPrompt&&window.sendPrompt('${T('promptReport').replace('%w',w0?.display||'').replace('%s',w0?.total.toFixed(1)||'').replace('%n',done.length)}')">${T('ctaReport')}</button>
+    <button class="btn" onclick="window.sendPrompt&&window.sendPrompt('${T('promptWinner').replace('%w',w0?.display||'')}')">${T('ctaWinner')}</button>
+    <button class="btn" onclick="window.sendPrompt&&window.sendPrompt('${T('promptLosers')}')">${T('ctaLosers')}</button>
+  </div>`;
 
   document.getElementById('results-content').innerHTML=html;
 }
 
 /* ── Drag & Drop ── */
 const dz=document.getElementById('drop-zone');
-dz.addEventListener('dragover', e=>{e.preventDefault();dz.classList.add('drag');});
+dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('drag');});
 dz.addEventListener('dragleave',()=>dz.classList.remove('drag'));
 dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('drag');handleFiles(e.dataTransfer.files);});
 
 /* ── Init ── */
-renderC('tech');
-renderC('fin');
+applyLang();
 </script>
 </body>
 </html>
